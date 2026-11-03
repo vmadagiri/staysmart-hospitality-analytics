@@ -1,153 +1,262 @@
-# StaySmart
+# StaySmart 🏨
 ### Explore smarter. Stay better.
 
-Washington, D.C. accommodation discovery and explainable personalization.
-Built by **Vaishnavi Madagiri** · [GitHub](https://github.com/vmadagiri)
+**A travel discovery and personalization project built with real Washington, D.C. accommodation data.**
 
-**Status:** implemented and tested locally using Streamlit AppTest. Not publicly deployed. Desktop/mobile visual checks and app screenshots remain pending because the available browsers could not reach the development server.
+I wanted to build something that went beyond a typical data dashboard. Instead of just showing charts and statistics, I wanted people to actually use the data to make a decision.
 
-## Problem
-Finding a suitable stay means balancing price, location, space, and amenities. StaySmart turns public listings into a searchable experience and explains why each recommended stay fits a visitor's preferences.
+That's how **StaySmart** came together: an interactive website where travelers can explore accommodations, narrow down their options, compare properties, and see why certain stays might be a better match.
 
-## Features
-- Discover Stays: price, neighborhood, property type, guest count, bedrooms, review score, and amenity filters; sorting and pagination.
-- Personalized Picks: five matches with individual explanations and component scores.
-- Market Insights: filtered metrics, price distributions, neighborhood comparisons, amenities, property types, reviews, summary availability, and an approximate location map.
-- Behind the Data: cleaning audit, verified findings, attribution, and limitations.
+Built by **Vaishnavi Madagiri** | M.S. Data Science, Virginia Tech
 
-## Data and attribution
-Source: [Inside Airbnb](https://insideairbnb.com/get-the-data/), Washington, D.C., United States. Snapshot dated **September 19, 2026**, the latest listed at retrieval. Actual scrape dates: September 19–20, 2026.
+**[🌐 Try StaySmart](https://staysmart-vm.streamlit.app/)** | **[💻 Explore the Code](https://github.com/vmadagiri/staysmart-hospitality-analytics)**
 
-[Original detailed listings.csv.gz](https://data.insideairbnb.com/united-states/dc/washington-dc/2026-09-19/data/listings.csv.gz)
+---
 
-Licensed under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/). StaySmart selects fields, cleans values, aggregates statistics, and adds preference scores. No endorsement is implied.
+## The Idea
 
-Original download SHA-256: `4ec55977ada4b55d1a2d3641f6d49cc321dc82d3c895fe4bf22dc19fa8fecdf8`.
+Finding a place to stay sounds simple until you start comparing dozens of listings.
 
-Inside Airbnb asks users not to republish data files. Raw and processed CSVs are Git-ignored. The app downloads the pinned official file once when needed, stores it locally, and caches reads. A cold deployment requires source availability; the source may eventually archive the snapshot. An unavailable source produces an error message instead of substitute data. Listing photographs are omitted because the dataset license does not establish rights to third-party photos. Cards use typography and amenity tags instead.
+One property is cheaper, another has better reviews, and a third has everything you need but is in a different neighborhood.
 
-## Verified findings
-Calculated from the full cleaned snapshot:
-- 6,906 records before and after cleaning; no duplicate or missing listing IDs removed.
-- 5,993 listings have valid prices; 913 have missing prices. Median reported nightly listing price: **$213.50**.
-- 5,260 listings (**76.2%**) are entire homes or apartments.
-- 5,565 listings have reported review scores; their listing-weighted average is **4.76/5**.
+I wanted to see if I could make that process easier using data.
 
-These are listing statistics, not booking outcomes. See `docs/data_audit.json` for the recorded schema and audit.
+My goal was to build a tool that answers three questions:
 
-## Tools and structure
-Python 3.12, pandas, Streamlit, Plotly, compressed CSV, and Python standard-library tests. No database, paid API, chatbot, or machine-learning model.
+1. Which accommodations actually meet my requirements?
+2. Which ones match my personal preferences?
+3. Why is one stay recommended over another?
 
-| File | Purpose |
+I started with a real dataset and gradually developed it into an interactive travel discovery experience.
+
+## What's Inside StaySmart?
+
+### 🔎 Discover Stays
+Search real accommodation listings using filters for budget, guest count, bedrooms, neighborhood, property type, review scores, and amenities.
+
+I included sorting and pagination so users don't have to scroll through thousands of properties at once.
+
+### 💜 Personalized Picks
+This is the feature I was most interested in building.
+
+Users can set their requirements and preferences, and StaySmart returns up to five ranked recommendations.
+
+Instead of displaying a match score without context, the app explains how each property fits the user's choices.
+
+### ⚖️ Compare Stays
+Sometimes two properties look equally good until you compare them side by side.
+
+I added an option to compare up to three stays based on price, guest capacity, bedrooms, reviews, and reported amenities. Personalized comparisons also show match scores.
+
+### 📊 Market Insights
+I wanted the project to be useful for exploring the data itself, too.
+
+The analytics page includes interactive Plotly charts covering nightly prices, neighborhood trends, property types, review scores, amenities, and an approximate location map.
+
+### 🗂️ Behind the Data
+This section explains where the information comes from, how it was cleaned, what the findings mean, and where the data has limitations.
+
+I wanted users to understand what they're looking at rather than assume every number tells the full story.
+
+---
+
+## Starting With Real Data
+
+I used the **Inside Airbnb Washington, D.C. dataset**, dated September 19, 2026.
+
+I chose it because it includes actual public accommodation listings, prices, property details, reviews, amenities, and location information.
+
+### A few things I found
+
+| Metric | Result |
+|---|---:|
+| Total listings analyzed | 6,906 |
+| Listings with valid prices | 5,993 |
+| Median reported nightly price | $213.50 |
+| Entire homes or apartments | 76.2% |
+| Average reported review score | 4.76 / 5 |
+
+One thing I had to account for was missing information. For example, **913 listings didn't have valid reported prices**.
+
+Rather than making up prices or removing those listings completely, the cleaning pipeline preserves them for analyses that don't require price information. They're excluded when someone searches using a maximum budget.
+
+That distinction matters because missing data shouldn't automatically mean the entire record is useless.
+
+## How I Built It
+
+I kept the technical stack straightforward because I wanted the data processing, recommendation logic, and interface to be easy to understand and test.
+
+| Technology | What it's used for |
 |---|---|
-| `app.py` | Four interactive pages |
-| `src/clean_data.py` | Download, validate columns, clean, and audit |
-| `src/recommend.py` | Essential filters and explainable ranking |
-| `src/analytics.py` | Shared summary calculations |
-| `data/raw/` | Original download, kept locally |
-| `data/processed/` | Allowlisted property fields and cleaning audit |
-| `tests/test_project.py` | Cleaning, scoring, metrics, and app checks |
-| `.streamlit/config.toml` | Warm white, navy, and lavender theme |
+| Python | Main application logic |
+| pandas | Data cleaning, filtering, and analysis |
+| Streamlit | Interactive website and user controls |
+| Plotly | Charts and geographic visualizations |
+| CSV / JSON | Processed data and cleaning audit |
+| unittest | Automated checks for key functionality |
+| GitHub | Version control and source hosting |
+| Streamlit Community Cloud | Public deployment |
 
-## Run locally
-Use Python 3.12. Open a terminal inside this project folder:
+### The Data Pipeline
+
+```text
+Inside Airbnb (CSV.gz)
+        ↓
+Download and validate
+        ↓
+Clean with Python + pandas
+        ↓
+Save processed data + audit
+        ↓
+Apply search filters and recommendation scores
+        ↓
+Display results in Streamlit + Plotly
+```
+
+I separated the project into smaller Python modules rather than putting everything into one large file.
+
+| File | Responsibility |
+|---|---|
+| `app.py` | Website layout, navigation, and interactive features |
+| `src/clean_data.py` | Downloading, validating, and cleaning listings |
+| `src/recommend.py` | Filtering and recommendation scoring |
+| `src/analytics.py` | Market statistics and summary calculations |
+| `tests/` | Automated testing |
+| `assets/` | Original logo, illustrations, and styling |
+| `docs/` | Data audit, project walkthrough, and technical notes |
+
+## How the Recommendations Work
+
+StaySmart uses a **rule-based recommendation system**, not a trained machine-learning model.
+
+I wanted the recommendations to be transparent so users could understand why a property appeared in their results.
+
+The process has two steps.
+
+**Step 1: Filter out stays that don't meet the requirements.**
+
+For example, if someone sets a $200 maximum budget and needs room for two guests, properties that exceed the price limit or can't accommodate two people are excluded.
+
+**Step 2: Score the remaining stays.**
+
+The algorithm uses five weighted factors:
+
+| Factor | Base weight |
+|---|---:|
+| Budget fit | 30% |
+| Review score | 30% |
+| Preferred amenities | 20% |
+| Preferred neighborhood | 10% |
+| Capacity fit | 10% |
+
+Each factor is normalized between 0 and 1 before the weighted score is calculated.
+
+If users don't select certain optional preferences, those weights are removed and the remaining weights are rescaled.
+
+The results are then ranked from highest to lowest, with lower price and listing ID used to break ties.
+
+**Important:** These are initial design weights, not weights learned from actual customer behavior. A 93/100 match score doesn't mean there's a 93% chance someone will book.
+
+## What Changed Along the Way?
+
+StaySmart didn't start out looking like the current website.
+
+The first working version focused on getting the data, filters, recommendations, and analytics in place. Once I started testing it locally, I realized that having the right information wasn't enough. It also needed to be easy to navigate and understand.
+
+A few improvements came out of that process:
+
+- **Clearer recommendations:** Made match scores more visible and added explanations and score breakdowns.
+- **Better comparisons:** Added a side-by-side view for up to three stays.
+- **Improved design:** Introduced a StaySmart logo, original D.C.-inspired illustrations, and a consistent navy, ivory, and lavender style.
+- **Cleaner navigation:** Made the four sections easier to move between and reduced unnecessary scrolling.
+- **Bug fixes:** Addressed a Streamlit pagination/session-state warning and an undefined map title.
+- **More testing:** Added regression tests to check that fixes didn't break existing behavior.
+
+I used AI coding assistance during development, especially for implementation, debugging, styling, and documentation. I guided the requirements, reviewed the local interface, reported issues, and requested changes while working through how the application functions.
+
+This was also a useful reminder that **a working feature and a good user experience aren't always the same thing**.
+
+## Testing and Validation
+
+The project has **18 automated tests** covering areas such as:
+
+- Data cleaning, missing values, and schema validation
+- Essential filters and recommendation calculations
+- Score normalization and ranking behavior
+- Navigation, pagination, and filter resets
+- Property comparisons and empty results
+- Map title and configuration
+
+I also tested the interface locally and deployed the application through Streamlit Community Cloud.
+
+Automated tests help verify expected behavior, but they don't replace real user testing or guarantee that every browser and device will behave the same way.
+
+## What I Would Improve Next
+
+There are several directions I'd like to explore as I continue learning.
+
+**1. Test the recommendations with real users.**
+
+The current scoring weights are based on design choices. I'd like to test whether people find the recommended stays useful and adjust the ranking based on feedback.
+
+**2. Explore machine learning.**
+
+With appropriate user interaction data, I could compare the current rule-based approach with a learned ranking model.
+
+**3. Add live travel information.**
+
+Right now, StaySmart uses a historical dataset. A production version would need current pricing, fees, trip dates, and actual availability.
+
+**4. Improve performance at scale.**
+
+For much larger datasets, I'd explore database-backed filtering, scheduled data updates, and more efficient loading.
+
+## Run It Locally
+
+Use Python 3.12.
 
 ```bash
+git clone https://github.com/vmadagiri/staysmart-hospitality-analytics.git
+cd staysmart-hospitality-analytics
+
 python3 -m venv .venv
 source .venv/bin/activate
+
 python -m pip install -r requirements.txt
 python -m src.clean_data
-python -m unittest discover -s tests -v
 python -m streamlit run app.py
 ```
 
-On Windows, activate with `.venv\Scripts\activate` instead. `requirements.txt` pins direct dependencies; `requirements-lock.txt` is preserved from the original project. The current checks used Python 3.12 and the three pinned direct dependencies in `requirements.txt`; the old full lock file was not revalidated. Use `requirements.txt` for setup.
+To run the automated tests:
 
-## Cleaning decisions
-Retain records unless the listing ID is absent or duplicated. Parse dollar signs and commas from prices; nonpositive or invalid values become missing. Do not infer missing prices, bedrooms, capacity, reviews, or amenities. Unknown prices remain available for non-price analysis. Search requires reported price, capacity, and bedrooms. Zero bedrooms can represent a studio.
-
-Review scores outside 0–5, or scores with no reviews, become missing. Invalid availability counts become missing. A broad D.C. coordinate extent is a sanity check, not an exact boundary test. Unknown amenities cannot satisfy a must-have. Parking includes paid/free and street parking. High prices stay in the data; optional 99th-percentile trimming affects price charts only. Metrics retain the full filtered population.
-
-Only property fields are retained in processed data. Host identities, review text, and estimated occupancy/revenue fields are excluded.
-
-## Recommendation method
-First enforce maximum price, minimum capacity, bedrooms, review threshold, property type, and required amenities. Then rank eligible listings:
-
-| Component | Normalized value | Base weight |
-|---|---|---|
-| Budget fit | `1 - price / budget` | 30% |
-| Review score | `review_score / 5`; unknown earns zero | 30% |
-| Amenity match | Share of nice-to-haves reported | 20% |
-| Neighborhood match | 1 for preferred area, otherwise 0 | 10% |
-| Capacity fit | `guests / accommodates` | 10% |
-
-Components are bounded between 0 and 1. Remove unspecified amenity/neighborhood preferences and rescale active weights to total 100%. Multiply the weighted average by 100. Ties use lower price, then listing ID. These weights are design choices, not learned from customer behavior. The score is not a probability or guarantee. Giving unknown reviews zero points may disadvantage new listings.
-
-## Limitations
-This historical Airbnb snapshot is not Marriott inventory. Prices are not live quotes, and may exclude fees or reflect different stay conditions. Trip dates and minimum-stay eligibility are not checked. Locations are approximate; map background tiles require internet access and have a plain-background fallback.
-
-Availability charts use overlapping 30/60/90/365-day summary fields in detailed listings. No separate calendar file was downloaded. Unavailable nights can reflect bookings or host blocks. No bookings, revenue, occupancy, cancellations, conversions, or customer identities are inferred.
-
-With authorized customer behavior and booking data, future work could evaluate ranking relevance, search completion, and A/B tests. This project does not establish a business uplift.
-
-## Validation and screenshots
-Fourteen automated checks passed, including all four pages, empty searches, score normalization and independent score calculation, required filters, missing values, duplicates, schema errors, offline download failure, and metric reconciliation. Tests deliberately alter copies of real rows to check invalid inputs; these fixtures are never used in the app.
-
-Browser layout testing and app screenshots are **not yet verified**. After launching locally, capture Discover Stays and Market Insights at desktop width and check the same pages at 390px mobile width. Save actual captures in `docs/screenshots/`; do not use mock screenshots. OpenStreetMap tile rendering also needs this browser check.
-
-## Deploy to Streamlit Community Cloud
-No GitHub changes or deployment were performed during this update. Confirm your repository and permissions before following these optional steps.
-
-After approval:
-1. Push the reviewed source to the repository's `main` branch. Keep data files and secrets excluded.
-2. Make the repository public if desired for recruiter review.
-3. Sign in at https://share.streamlit.io/ using GitHub and authorize access to this repository.
-4. Choose **Create app**, repository `vmadagiri/staysmart-hospitality-analytics`, branch `main`, main file `app.py`.
-5. In advanced settings select Python **3.12**. No secrets are needed.
-6. Request subdomain `staysmart-vm` if available, then deploy.
-7. Set the app's sharing to public. Open the returned URL in an incognito window and confirm visitors need no login. Test all four pages, filters, empty results, charts, map, and mobile layout.
-8. Add the verified live URL here only after those checks succeed.
-
-[Official deployment instructions](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy)
-
-**Live website:** pending deployment; `staysmart-vm.streamlit.app` is a requested address, not a verified live site.
-
-## 60-second interview explanation
-I built StaySmart to explore how data can make travel discovery easier. I used real public accommodation listings from Washington, D.C., cleaned them with pandas, and built an interactive Streamlit app. Visitors can filter stays by budget, location, space, and amenities. The app then ranks eligible listings using a simple scoring method and explains each recommendation.
-
-I also built a dashboard to explore prices, reviews, and listing availability. One important decision was keeping missing prices out of price-based searches without throwing away those listings from the rest of the analysis. I was careful to distinguish listed prices and availability from actual bookings or revenue.
-
-This connects to my interest in Marriott's digital personalization and optimization work: using data to make choices more relevant and easier to understand. With real customer behavior data, my next step would be testing whether the recommendations help users complete their searches.
-
-
-## November 2026 interface update
-- Active-page button navigation and a compact, page-specific header.
-- Ivory, navy, and lavender styling in `assets/style.css`; no external font or photo assets.
-- Discover's extra filters are collapsible. Recommendations keep preference controls visible.
-- Listing cards show readable prices, amenity tags, direct original-listing links, and expanded details.
-- Recommendation bars show actual component values, effective weights, and points. Missing reviews remain explicit.
-- Market Insights includes neighborhood listing counts, a shorter price comparison, and richer map hover details. The box plot shows up to 12 neighborhoods; the full table retains all areas.
-- Behind the Data includes a responsive five-step pipeline diagram.
-- The raw data, processed data, audit files, cleaning, analytics, and recommendation modules are unchanged.
-
-## Read and practice
-- [Project walkthrough](docs/PROJECT_WALKTHROUGH.md)
-- [Marriott interview preparation](docs/MARRIOTT_INTERVIEW_PREP.md)
-- [Validation and remaining checks](docs/VALIDATION.md)
-
-Extract the updated folder separately from your existing project. The download excludes the machine-specific virtual environment and Git metadata. Create a new virtual environment with the commands above; retain your original project folder.
-
-## Interactive design update
-Original SVG logo/favicon, compact lavender hero, labeled illustration cards, four-amenity previews, reset controls, and comparison of up to three currently eligible stays. Changing filters or sorting restarts pagination. Personalized comparisons include the actual match score. Python, pandas, Streamlit, and Plotly remain the only main tools; no new dependencies.
-
-Run from this folder using Python 3.12 (the tested version):
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python -m streamlit run app.py
+python -m unittest discover -s tests -v
 ```
-Run checks with `python -m unittest discover -s tests -v`.
 
-## Latest refinement
-Fixed the `discover_page` duplicate-default warning. Session state owns pagination initialization; search changes and reset return to page 1. Added an original SVG skyline hero, refreshed doorway/pin logo, higher-contrast cards, review badges, large match-score panels, and framed charts. All 17 automated tests pass. Browser appearance still needs local visual review.
+The app downloads the official source data when needed. Raw and processed datasets aren't included in this repository.
+
+## Data Source and Limitations
+
+Data: [Inside Airbnb — Washington, D.C.](https://insideairbnb.com/get-the-data/)  
+Snapshot: September 19, 2026; actual scrape dates September 19–20, 2026  
+License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+
+This is an independent portfolio project and isn't affiliated with Marriott or Airbnb.
+
+StaySmart uses historical public listings, not live booking inventory. Prices may not include fees, and availability fields cannot reliably tell us whether a property was booked or blocked by its host. Location coordinates are approximate.
+
+The project doesn't claim to measure bookings, occupancy, revenue, or improvements in conversion.
+
+## Why This Project Matters to Me
+
+What I enjoyed most about StaySmart was connecting data analysis to an actual user experience.
+
+I wanted to go beyond cleaning a dataset and creating visualizations. I wanted to understand how the same data could help someone make a choice, and how to make that choice easier to explain.
+
+It's the kind of work I'm interested in exploring further: **data engineering, analytics, personalization, and building technology around real user needs.**
+
+---
+
+**Built by Vaishnavi Madagiri**
+
+[Live StaySmart Website](https://staysmart-vm.streamlit.app/) · [GitHub Profile](https://github.com/vmadagiri) · [Project Walkthrough](docs/PROJECT_WALKTHROUGH.md)
